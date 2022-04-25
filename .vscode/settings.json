@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "console.h": "c",
+        "gdt.h": "c",
+        "idt.h": "c"
+    }
+}
