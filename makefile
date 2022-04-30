@@ -18,7 +18,8 @@ as:
 	$(NASM) $(ASFLAGS) 'src/asm/gdt.asm' -o 'src/asm/gdt.o'
 	$(NASM) $(ASFLAGS) 'src/asm/interrupts.asm' -o 'src/asm/interrupts.o'
 	$(NASM) $(ASFLAGS) 'src/asm/realmode.asm' -o 'src/asm/realmode.o'
-	$(NASM) $(ASFLAGS) 'src/asm/memory.asm' -o 'src/asm/memory.o'
+	$(NASM) $(ASFLAGS) 'src/asm/paging.asm' -o 'src/asm/paging.o'
+	$(NASM) $(ASFLAGS) 'src/asm/tss.asm' -o 'src/asm/tss.o'
 link:
 	$(LD) -w -T 'linker.ld' -o 'kernel.bin' -ffreestanding -O2 -nostdlib $(LINK_SOURCES) -lgcc	
 

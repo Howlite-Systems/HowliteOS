@@ -1,7 +1,12 @@
+// https://wiki.osdev.org/Paging
+// https://wiki.osdev.org/Setting_Up_Paging
 #pragma once
 #include <stdint.h>
 
-uint64_t page_dir_ptr_table[4] __attribute__((aligned(0x20)));
-uint64_t page_dir[512] __attribute__((aligned(0x1000))); // decimal 4096 -> they need to be page-aligned
+uint32_t page_directory[1024] __attribute__((aligned(4096)));
+uint32_t first_page_table[1024] __attribute__((aligned(4096)));
+
+extern void load_page_dir(uint32_t*);
+extern void enable_paging();
 
 void paging_init();

@@ -1,11 +1,33 @@
 #include "paging.h"
+#include <core/video/console.h>
+#include <utils/conversion.h>
+
+extern uint32_t kernel_end;
 
 void paging_init()
 {
-    page_dir_ptr_table[0] = (uint64_t)&page_dir | 1; // set the page directory into the PDPT and mark it present
-    page_dir[0] = 0b10000011; //Address=0, 2MIB, RW and present
+    // set each entry to not present
+    for (int i = 0; i < 1024; i++)
+    {
+        // This sets the following flags to the pages:
+        //   Other stuff -> 5 bits set to 0
+        //   Supervisor: Only kernel-mode can access them -> 1 bit set to 0
+        //   Write Enabled: It can be both read from and written to -> 1 bit set to 1
+        //   Not Present: The page table is not present -> 1 bit set to 0
+        page_directory[i] = 0b00000010;
+    }
 
-    asm volatile ("movl %%cr4, %%eax; bts $5, %%eax; movl %%eax, %%cr4" ::: "eax"); // set bit5 in CR4 to enable PAE		 
-    asm volatile ("movl %0, %%cr3" :: "r" (&page_dir_ptr_table)); // load PDPT into CR3
-    asm volatile ("movl %%cr0, %%eax; orl $0x80000000, %%eax; movl %%eax, %%cr0;" ::: "eax");
+    // we will fill all 1024 entries in the table, mapping 4 megabytes
+    for (int i = 0; i < 1024; i++)
+    {
+        // As the address is page aligned, it will always leave 12 bits zeroed.
+        // Those bits are used by the attributes ;)
+        first_page_table[i] = (i * 4096) | 0b011; // attributes: supervisor level, read/write, present.
+    }
+
+    // attributes: supervisor level, read/write, present
+    page_directory[0] = ((unsigned int)first_page_table) | 0b011;
+
+    load_page_dir(page_directory);
+    enable_paging();
 }

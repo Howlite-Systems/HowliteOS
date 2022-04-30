@@ -22,6 +22,7 @@ SECTIONS
 		*(COMMON)
 		*(.bss)
 		*(.bootstrap_stack)
+		kernel_end = .;
 	}
 
   	kernel_end = ALIGN(4K);
