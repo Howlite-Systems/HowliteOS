@@ -25,6 +25,7 @@ void kernel_main()
     while (1)
     {
         print("Input: ");
-        read_line();
+        print(read_line());
+        print("\n");
     }
 }
